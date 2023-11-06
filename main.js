@@ -6,8 +6,8 @@ const state = {
 let ticketsData, ticketDetails
 const ticketsKeys = {
   "driver": driversData,
-  "commander": commandersDataGDZS,
-  "fireman": firemanDataGDZS
+  "commander": commandersData,
+  "fireman": firemanData
 }
 
 // Обработка кнопок gdzsWithout и gdzsWith
