@@ -12,6 +12,7 @@ const ticketsKeys = {
 
 // Обработка кнопок gdzsWithout и gdzsWith
 // Выбор между commandersData/commandersDataGDZS и firemanData/firemanDataGDZS
+// https://cloud.mail.ru/public/YbXT/kPT9sZimY/%D0%91%D0%B8%D0%BB%D0%B5%D1%82%D1%8B
 
 for (let button of document.querySelectorAll('[data-job]')) {
   button.addEventListener('click', function (event) {
