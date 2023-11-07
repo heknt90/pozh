@@ -13,7 +13,7 @@
 <body>
   <div class="container">
     <div class="row">
-      <div class="col-12 py-5">
+      <div class="col-12 pt-5">
         <!-- Start screen -->
         <div class="my-3" id="screenStart">
           <button class="btn btn-primary" data-job="driver">Водитель</button>
@@ -24,19 +24,23 @@
       <div class="col-12">
         <div class="my-3 visually-hidden" id="screenGdzs">
           <div class="btn-group text-white">
-            <button class="btn btn-info" id="gdzsWithout">Без ГДЗС</button>
-            <button class="btn btn-warning" id="gdzsWith">Есть вопросы про ГДЗС</button>
+            <button class="btn btn-info" data-gdzs="false" id="gdzsWithout">Без ГДЗС</button>
+            <button class="btn btn-warning" data-gdzs="true" id="gdzsWith">Есть вопросы про ГДЗС</button>
           </div>
         </div>
 
         <!-- No ticket -->
-        <!-- <div class="my-3 visually-hidden" id="screenTicketChoice"> -->
+        <div>
+          <h2 class="text-center" id="header"></h2>
+        </div>
         <div class="my-3" id="screenTicketChoice">
 
         </div>
-
+        <div>
+          <h3 class="text-center" id="subheader"></h3>
+          <p class="text-center" id="shortAnswers"></p>
+        </div>
         <!-- Ticket -->
-        <!-- <div class="my-3 visually-hidden" id="screenTicketDetails"> -->
         <div class="my-3" id="screenTicketDetails">
 
         </div>
