@@ -121,20 +121,22 @@
 
       function jobChoiseButtonHandler(event) {
         const dataJob = event.target.dataset.job
-        setState({ jobTitle: dataJob })
-        let key = state["jobTitle"] + "sData"
-        if (dataJob !== "driver") {
-          setState({ withGDZS: true })
-          screenGdzs.classList.remove("visually-hidden")
-          key += "WithGDZS"
-          gdzsWith.focus()
-        } else if (!screenGdzs.classList.contains("screenGdzs.classList")) {
-          screenGdzs.classList.add("visually-hidden")
-          setState({ withGDZS: false })
+        if (state["jobTitle"] != dataJob) {
+          setState({ jobTitle: dataJob })
+          let key = state["jobTitle"] + "sData"
+          if (dataJob !== "driver") {
+            setState({ withGDZS: true })
+            screenGdzs.classList.remove("visually-hidden")
+            key += "WithGDZS"
+            gdzsWith.focus()
+          } else if (!screenGdzs.classList.contains("screenGdzs.classList")) {
+            screenGdzs.classList.add("visually-hidden")
+            setState({ withGDZS: false })
+          }
+          ticketsData = data[key]
+          updateTicketsList(ticketsData)
+          updateTicketsDetails()
         }
-        ticketsData = data[key]
-        updateTicketsList(ticketsData)
-        updateTicketsDetails()
       }
 
       function gdzsChoiseButtonHandler(event) {
