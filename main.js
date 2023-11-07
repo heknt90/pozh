@@ -1,31 +1,41 @@
-const state = {
-  jobTitle: undefined,
-  ticketNumber: undefined,
-  withGDZS: false
-}
+(function () {
+  const state = {
+    jobTitle: undefined,
+    ticketNumber: undefined,
+    withGDZS: false
+  }
 
+  window.getState = () => state
+  window.setState = setState
 
+  function setState(newState) {
+    for (let item in newState) {
+      state[item] = newState[item]
+    }
+  }
 
-let ticketsData, ticketDetails
-const ticketsKeys = {
-  "driver": data["driversData"],
-  "commander": data["commandersData"],
-  "fireman": data["firemanData"]
-}
+  const headers = {
+    driver: "Билеты для водителей",
+    commander: "Билеты для командиров",
+    fireman: "Билеты для пожарных",
+    withGDZS: " с вопросами по ГДЗС",
+    withoutGDZS: " без вопросов по ГДЗС",
+  }
 
-const headers = {
-  driver: "Билеты для водителей",
-  commander: "Билеты для командиров",
-  fireman: "Билеты для пожарных",
-  withGDZS: " с вопросами по ГДЗС",
-  withoutGDZS: " без вопросов по ГДЗС",
-}
+  const emptyTicketTitle = "Выберите номер билета выше."
 
-// Обработка кнопок gdzsWithout и gdzsWith
-// Выбор между commandersData/commandersDataGDZS и firemanData/firemanDataGDZS
+  // Global variable (refactoring requre)
+  let ticketsData
 
-for (let button of document.querySelectorAll('[data-job]')) {
-  button.addEventListener('click', function (event) {
+  for (let button of document.querySelectorAll('[data-job]')) {
+    button.addEventListener('click', jobChoiseButtonHandler)
+  }
+  for (let button of document.querySelectorAll('[data-gdzs]')) {
+    button.addEventListener("click", gdzsChoiseButtonHandler)
+  }
+  document.querySelector("#screenTicketChoice").addEventListener("click", ticketChoiseButtonHandler)
+
+  function jobChoiseButtonHandler(event) {
     const dataJob = event.target.dataset.job
     setState({ jobTitle: dataJob })
     let key = state["jobTitle"] + "sData"
@@ -39,89 +49,124 @@ for (let button of document.querySelectorAll('[data-job]')) {
       setState({ withGDZS: false })
     }
     ticketsData = data[key]
-    screenTicketChoice.innerHTML = updateTicketsList(ticketsData)
-    screenTicketDetails.innerHTML = updateTicketsDetails()
-  })
-}
+    updateTicketsList(ticketsData)
+    updateTicketsDetails()
+  }
 
-for (let button of document.querySelectorAll('[data-gdzs]')) {
-  button.addEventListener("click", function(event) {
+  function gdzsChoiseButtonHandler(event) {
     const withGDZS = event.target.dataset.gdzs === "true"
-    setState({withGDZS})
-    const gdzsSuffix = withGDZS ? "WithGDZS" : ""
-    const key = state["jobTitle"]+ "sData"+gdzsSuffix
-    ticketsData = data[key]
-    screenTicketChoice.innerHTML = updateTicketsList(ticketsData)
-    screenTicketDetails.innerHTML = updateTicketsDetails()
-  })
-}
-
-document.querySelector("#screenTicketChoice").addEventListener("click", function (event) {
-  if (event.target.dataset.ticket) {
-    ticketDetails = ticketsData[event.target.dataset.ticket]
-    updateSubheader(event.target.dataset.ticket)
-    screenTicketDetails.innerHTML = updateTicketsDetails(ticketDetails)
-  }
-})
-
-function setState(newState) {
-  for (let item in newState) {
-    state[item] = newState[item]
-  }
-}
-
-function updateTicketsList(dataJob) {
-  updateHeader()
-  let content = ""
-  for (let item in dataJob) {
-    content += `<button class="btn btn-secondary m-1" data-ticket="${item}">Билет ${item}</button>`
-  }
-  return content
-}
-
-function updateTicketsDetails(dataTicket) {
-  if (!dataTicket) {
-    updateSubheader()
-    updateShortAnswers()
-    return "<p class='text-center mt-5'>Выберите номер билета выше.</p>"
-  }
-  updateShortAnswers(dataTicket)
-  let content = "<dl>"
-  for (let i = 1; i <= Object.keys(dataTicket).length; i++) {
-    content += `<dt>${i}. ${dataTicket[i].q}</dt><dd>${dataTicket[i].a}</dd>`
-    if (i < Object.keys(dataTicket).length) {
-      content += "<hr />"
+    if (withGDZS !== state["withGDZS"]) {
+      setState({ withGDZS })
+      const gdzsSuffix = withGDZS ? "WithGDZS" : ""
+      const key = state["jobTitle"] + "sData" + gdzsSuffix
+      ticketsData = data[key]
+      updateTicketsList(ticketsData)
+      updateTicketsDetails()
     }
   }
-  content += "</dl>"
-  return content
-}
 
-function updateHeader() {
-  let headerContent = headers[state["jobTitle"]]
-  if (state["withGDZS"]) {
-    headerContent += headers["withGDZS"]
-  } else if (state["jobTitle"] !== "driver") {
-    headerContent += headers["withoutGDZS"]
-  }
-  header.innerText = headerContent
-}
-
-function updateSubheader(ticketNumber) {
-  if (ticketNumber) {
-    subheader.innerText = "Билет №" + ticketNumber
-  } else {
-    subheader.innerText = ""
-  }
-}
-
-function updateShortAnswers(dataTicket) {
-  let content = ""
-  if (dataTicket) {
-    for (let item in dataTicket) {
-      const answer = dataTicket[item]["a"].split(".")[0]
-      content+=  `<b>${item}:</b> ${answer}; `
+  function ticketChoiseButtonHandler(event) {
+    if (event.target.dataset.ticket) {
+      const ticketNumber = event.target.dataset.ticket
+      let ticketDetails = ticketsData[ticketNumber]
+      updateSubheader(ticketNumber)
+      updateTicketsDetails(ticketDetails)
     }
   }
-  shortAnswers.innerHTML = content
-}
+
+  function updateTicketsList(dataJob) {
+    updateHeader()
+    screenTicketChoice.innerHTML = generateTicketsList()
+
+    function generateTicketsList() {
+      let content = ""
+      for (let item in dataJob) {
+        content += templateTicketButton(item)
+      }
+      return content
+    }
+
+    function templateTicketButton(item) {
+      return `<button class="btn btn-secondary m-1" data-ticket="${item}">Билет ${item}</button>`
+    }
+  }
+
+  function updateTicketsDetails(dataTicket) {
+    let content
+    if (!dataTicket) {
+      updateSubheader()
+      updateShortAnswers()
+      content = templateEmptyTicketTitle()
+    } else {
+      updateShortAnswers(dataTicket)
+      content = generateTicketDetails(dataTicket)
+    }
+    screenTicketDetails.innerHTML = content
+
+    function generateTicketDetails(dataTicket) {
+      let content = "<dl>"
+      for (let i = 1; i <= Object.keys(dataTicket).length; i++) {
+        content += templateQuestionAndAnswer(i, dataTicket)
+      }
+      content += "</dl>"
+      return content
+    }
+
+    function templateQuestionAndAnswer(index, dataTicket) {
+      let result = `<dt>${index}. ${dataTicket[index].q}</dt><dd>${dataTicket[index].a}</dd>`
+      if (index < Object.keys(dataTicket).length) {
+        result += "<hr />"
+      }
+      return result
+    }
+
+    function templateEmptyTicketTitle() {
+      return `<p class="text-center mt-5">${emptyTicketTitle}</p>`
+    }
+  }
+
+  function updateHeader() {
+    header.innerText = generateHeaderContent()
+
+    function generateHeaderContent() {
+      let content = headers[state["jobTitle"]]
+      if (state["withGDZS"]) {
+        content += headers["withGDZS"]
+      } else if (state["jobTitle"] !== "driver") {
+        content += headers["withoutGDZS"]
+      }
+      return content
+    }
+  }
+
+  function updateSubheader(ticketNumber) {
+    subheader.innerText = generateSubheaderContent(ticketNumber)
+
+    function generateSubheaderContent(ticketNumber) {
+      return ticketNumber ? templateSubheader(ticketNumber) : ""
+    }
+
+    function templateSubheader(ticketNumber) {
+      return "Билет №" + ticketNumber
+    }
+  }
+
+  function updateShortAnswers(dataTicket) {
+    shortAnswers.innerHTML = generateShortAnswersContent(dataTicket)
+
+    function generateShortAnswersContent(dataTicket) {
+      let content = ""
+      if (dataTicket) {
+        for (let item in dataTicket) {
+          const answer = dataTicket[item]["a"].split(".")[0]
+          content += templateShortAnswer(item, answer)
+        }
+      }
+      return content
+    }
+
+    function templateShortAnswer(item, answer) {
+      return `<b>${item}:</b> ${answer}; `
+    }
+  }
+}())
