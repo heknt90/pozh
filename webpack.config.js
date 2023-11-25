@@ -54,7 +54,7 @@ module.exports = {
     new HtmlWebpackPlugin({ template: "./src/index.html" }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: './src/assets', to: "" }
+        { from: "./src/assets", to: "" }
       ]
     }),
     new WorkboxPlugin.GenerateSW({
