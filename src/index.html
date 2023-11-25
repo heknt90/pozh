@@ -19,7 +19,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96x96.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
-  <link rel="manifest" href="/favicons/manifest.json">
+  <link rel="manifest" href="manifest.json" />
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="msapplication-TileImage" content="/favicons/ms-icon-144x144.png">
   <meta name="theme-color" content="#ffffff">
@@ -34,6 +34,13 @@
       background-position: -120px center;
       background-attachment: fixed;
       background-blend-mode: darken;
+    }
+
+    .button-install {
+      position: absolute;
+      top: 1px;
+      left: 1px;
+      display: none;
     }
 
     @media screen and (min-width:500px) {
@@ -63,6 +70,7 @@
               <button class="btn btn-primary" data-job="commander">Командир отделения</button>
               <button class="btn btn-primary" data-job="fireman">Пожарный</button>
             </div>
+            <div><button class="btn btn-default button-install" id="buttonInstall">Установить приложение</button></div>
           </div>
           <div class="col-12">
             <div class="my-3 d-flex justify-content-center visually-hidden" id="screenGdzs">
