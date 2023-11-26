@@ -1,7 +1,7 @@
 {
   "name": "firemans",
   "short_name": "firemans",
-  "start_url": "/",
+  "start_url": "/dist",
   "theme_color": "#e63632",
   "background_color": "#ffffff",
   "orientation": "any",
