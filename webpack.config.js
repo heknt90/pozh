@@ -12,7 +12,8 @@ module.exports = {
     index: './src/index.js',
   },
   output: {
-    path: path.resolve(__dirname, 'dist/')
+    path: path.resolve(__dirname, 'dist/'),
+    clean: true
   },
   devServer: {
     open: true,
@@ -58,8 +59,19 @@ module.exports = {
       ]
     }),
     new WorkboxPlugin.GenerateSW({
-      clientsClaim: true,
-      skipWaiting: true
+      exclude: [
+        /index\.html$/,
+      ],
+      runtimeCaching: [
+        {
+          urlPattern: /index\.html/,
+          handler: 'NetworkFirst'
+        },
+        {
+          urlPattern: /\.(js|png|jpg)/,
+          handler: 'StaleWhileRevalidate'
+        }
+      ]
     })
   ],
 }
