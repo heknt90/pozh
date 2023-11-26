@@ -2,7 +2,6 @@
   "name": "firemans",
   "short_name": "firemans",
   "start_url": "https://heknt90.github.io/pozh/",
-  "scope": "/dist/",
   "theme_color": "#e63632",
   "background_color": "#ffffff",
   "orientation": "any",
