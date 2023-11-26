@@ -192,11 +192,11 @@ window.addEventListener('beforeinstallprompt', (e) => {
   // Stash the event so it can be triggered later.
   deferredPrompt = e;
   // Update UI to notify the user they can add to home screen
-  addBtn.style.display = 'block';
+  var installModalOffer = new bootstrap.Modal(modalInstall)
+  // modalInstall.
+  installModalOffer.show()
 
   addBtn.addEventListener('click', () => {
-    // hide our user interface that shows our Firemans button
-    addBtn.style.display = 'none';
     // Show the prompt
     deferredPrompt.prompt();
     // Wait for the user to respond to the prompt
@@ -207,6 +207,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
         console.log('User dismissed the Firemans prompt');
       }
       deferredPrompt = null;
+      installModalOffer.hide()
     });
   });
 });
