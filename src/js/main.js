@@ -184,30 +184,44 @@ if ('serviceWorker' in navigator) {
 // Code to handle install prompt on desktop
 
 let deferredPrompt;
-const addBtn = buttonInstall;
+let modalInstallOffer
 
 window.addEventListener('beforeinstallprompt', (e) => {
   // Prevent Chrome 67 and earlier from automatically showing the prompt
   e.preventDefault();
-  // Stash the event so it can be triggered later.
-  deferredPrompt = e;
-  // Update UI to notify the user they can add to home screen
-  var installModalOffer = new bootstrap.Modal(modalInstall)
-  // modalInstall.
-  installModalOffer.show()
+  if (getCookie("notinstall") !== "1") {
+    deferredPrompt = e;
+    modalInstallOffer = new bootstrap.Modal(modalInstall)
+    modalInstallOffer.show()
 
-  addBtn.addEventListener('click', () => {
-    // Show the prompt
+    buttonInstall.addEventListener('click', () => installAppHandler(deferredPrompt, modalInstallOffer, rejectInstallAppHandler));
+    buttonRejectInstall.addEventListener("click", () => rejectInstallAppHandler(60 * 60 * 24 * 30, modalInstallOffer))
+    buttonModalClose.addEventListener("click", () => rejectInstallAppHandler(60 * 10, modalInstallOffer))
+  }
+
+  function installAppHandler(deferredPrompt, modal, cbDismissed) {
     deferredPrompt.prompt();
-    // Wait for the user to respond to the prompt
     deferredPrompt.userChoice.then((choiceResult) => {
       if (choiceResult.outcome === 'accepted') {
         console.log('User accepted the Firemans prompt');
       } else {
         console.log('User dismissed the Firemans prompt');
+        cbDismissed(60 * 10, modal)
       }
       deferredPrompt = null;
-      installModalOffer.hide()
+      modal.hide()
     });
-  });
+  }
+
+  function rejectInstallAppHandler(maxAge, modal) {
+    document.cookie = `notinstall=1; max-age=${maxAge}`
+    modal.hide()
+  }
+
+  function getCookie(name) {
+    let matches = document.cookie.match(new RegExp(
+      "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+  }
 });
